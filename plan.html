@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zenova — Choose Your Learning Experience</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --navy:#0f1e45;
+      --navy-mid:#1a3166;
+      --blue:#2d5be3;
+      --blue-lt:#e8eeff;
+      --accent:#3d6ff8;
+      --gold:#f59e0b;
+      --gold-lt:#fef3c7;
+      --bg:#f0f3ff;
+      --card:#ffffff;
+      --text:#0f1e45;
+      --muted:#8492b4;
+      --border:#dde3f5;
+    }
+    html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100%}
+
+    /* blobs */
+    body::before,body::after{content:'';position:fixed;border-radius:50%;filter:blur(80px);opacity:.3;pointer-events:none;z-index:0}
+    body::before{width:520px;height:520px;background:radial-gradient(circle,#a8bfff 0%,#c7d6ff 60%,transparent 100%);top:-160px;left:-160px}
+    body::after{width:400px;height:400px;background:radial-gradient(circle,#cfd9ff 0%,#e0e8ff 60%,transparent 100%);bottom:-120px;right:-120px}
+
+    .page{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 16px 60px}
+
+    /* ── NAV ── */
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:16px 0 10px;flex-wrap:wrap;gap:8px}
+    .nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+    .nav-brand img{width:36px;height:36px;object-fit:contain}
+    .nav-brand-text{display:flex;flex-direction:column;line-height:1.1}
+    .nav-brand-name{font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:800;color:var(--navy);letter-spacing:-.5px}
+    .nav-brand-sub{font-size:.68rem;color:var(--muted)}
+    .nav-secure{display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--muted)}
+    .nav-secure svg{flex-shrink:0}
+    .paystack-badge{background:var(--navy);color:#fff;font-size:.65rem;font-weight:600;padding:3px 7px;border-radius:4px;letter-spacing:.05em}
+
+    /* ── HERO ── */
+    .hero{text-align:center;padding:32px 0 28px;animation:fadeUp .6s ease both}
+    .hero-pill{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:999px;padding:5px 14px;font-size:.72rem;font-weight:600;color:var(--navy-mid);letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px}
+    .hero h1{font-family:'Sora',sans-serif;font-size:clamp(1.6rem,5vw,3rem);font-weight:800;color:var(--navy);line-height:1.15;margin-bottom:12px}
+    .hero p{font-size:.9rem;color:var(--muted);max-width:540px;margin:0 auto;line-height:1.65}
+
+    /* ── CARDS GRID ── */
+    .plans{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:40px;animation:fadeUp .65s .1s ease both}
+
+    @media(min-width:640px){
+      .plans{grid-template-columns:repeat(2,1fr)}
+      .plan-card.premium{grid-column:1 / -1;max-width:480px;margin:0 auto;width:100%}
+    }
+    @media(min-width:900px){
+      .plans{grid-template-columns:repeat(3,1fr)}
+      .plan-card.premium{grid-column:auto;max-width:none;margin:0;width:auto}
+    }
+
+    .plan-card{background:var(--card);border-radius:18px;padding:24px 20px;border:2px solid var(--border);position:relative;transition:transform .2s,box-shadow .2s}
+    .plan-card:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(15,30,69,.1)}
+    .plan-card.featured{border-color:var(--blue);box-shadow:0 6px 28px rgba(45,91,227,.15)}
+    .plan-card.premium{border-color:var(--gold);box-shadow:0 6px 28px rgba(245,158,11,.13)}
+
+    .plan-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);font-size:.68rem;font-weight:700;padding:3px 12px;border-radius:999px;letter-spacing:.06em;white-space:nowrap}
+    .plan-badge.blue-badge{background:var(--blue);color:#fff}
+    .plan-badge.gold-badge{background:var(--gold);color:#fff}
+
+    .plan-icon{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:1.5rem}
+    .plan-icon.free-icon{background:var(--blue-lt)}
+    .plan-icon.scholar-icon{background:var(--blue-lt)}
+    .plan-icon.master-icon{background:var(--gold-lt)}
+
+    .plan-name{text-align:center;font-family:'Sora',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+    .plan-name.blue-name{color:var(--blue)}
+    .plan-name.gold-name{color:var(--gold)}
+    .plan-name.dark-name{color:var(--navy)}
+
+    .plan-price{text-align:center;margin-bottom:4px}
+    .plan-price-amount{font-family:'Sora',sans-serif;font-size:2.2rem;font-weight:800;color:var(--navy);line-height:1}
+    .plan-price-period{font-size:.78rem;color:var(--muted);font-weight:400}
+    .plan-desc{text-align:center;font-size:.8rem;color:var(--muted);margin-bottom:20px}
+
+    .plan-features{list-style:none;margin-bottom:24px;display:flex;flex-direction:column;gap:9px}
+    .plan-features li{display:flex;align-items:flex-start;gap:9px;font-size:.83rem;color:var(--navy)}
+    .plan-features li .check{width:17px;height:17px;flex-shrink:0;margin-top:1px}
+    .plan-features li .check.blue-check{color:var(--blue)}
+    .plan-features li .check.gold-check{color:var(--gold)}
+
+    .plan-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border-radius:11px;font-family:'Sora',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:transform .18s,box-shadow .18s;border:none;text-decoration:none}
+    .plan-btn.btn-outline{background:#fff;border:2px solid var(--border);color:var(--navy)}
+    .plan-btn.btn-outline:hover{border-color:var(--navy);transform:translateY(-1px)}
+    .plan-btn.btn-blue{background:var(--blue);color:#fff;box-shadow:0 4px 14px rgba(45,91,227,.28)}
+    .plan-btn.btn-blue:hover{background:var(--navy-mid);transform:translateY(-1px)}
+    .plan-btn.btn-gold{background:var(--gold);color:#fff;box-shadow:0 4px 14px rgba(245,158,11,.28)}
+    .plan-btn.btn-gold:hover{transform:translateY(-1px)}
+
+    /* ── COMPARE TABLE ── */
+    .compare-section{animation:fadeUp .65s .2s ease both;margin-bottom:48px}
+    .compare-title{font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;color:var(--navy);margin-bottom:16px}
+    .table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:14px;box-shadow:0 4px 20px rgba(15,30,69,.07)}
+    .compare-table{width:100%;min-width:480px;border-collapse:collapse;background:var(--card)}
+    .compare-table th,.compare-table td{padding:11px 14px;font-size:.8rem}
+    .compare-table thead tr{background:var(--navy);color:#fff}
+    .compare-table thead th{font-family:'Sora',sans-serif;font-weight:600;letter-spacing:.04em}
+    .compare-table thead th:first-child{text-align:left}
+    .compare-table thead th:not(:first-child){text-align:center}
+    .compare-table tbody tr:nth-child(even){background:#f8f9ff}
+    .compare-table tbody td{color:var(--navy);border-bottom:1px solid var(--border)}
+    .compare-table tbody td:first-child{font-weight:500}
+    .compare-table tbody td:not(:first-child){text-align:center}
+    .compare-table tbody tr:last-child td{border-bottom:none}
+    .col-scholar{color:var(--blue);font-weight:700}
+    .col-master{color:var(--gold);font-weight:700}
+    .check-icon{color:var(--blue);font-size:1rem}
+    .check-gold{color:var(--gold)}
+    .dash{color:var(--muted)}
+
+    /* ── WHY SECTION ── */
+    .why-section{text-align:center;animation:fadeUp .65s .3s ease both;margin-bottom:24px}
+    .why-title{font-family:'Sora',sans-serif;font-size:1.3rem;font-weight:800;color:var(--navy);margin-bottom:24px}
+    .why-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+    @media(min-width:640px){.why-grid{grid-template-columns:repeat(3,1fr)}}
+    @media(min-width:900px){.why-grid{grid-template-columns:repeat(5,1fr)}}
+    .why-item{background:var(--card);border-radius:14px;padding:20px 14px;border:1px solid var(--border)}
+    .why-icon{font-size:1.6rem;margin-bottom:10px}
+    .why-item-name{font-family:'Sora',sans-serif;font-size:.78rem;font-weight:700;color:var(--navy);margin-bottom:5px}
+    .why-item-desc{font-size:.74rem;color:var(--muted);line-height:1.5}
+
+    /* ── FOOTER ── */
+    .footer{border-top:1px solid var(--border);margin-top:40px;padding-top:28px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;animation:fadeUp .65s .4s ease both}
+    .footer-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+    .footer-brand img{width:32px;height:32px;object-fit:contain}
+    .footer-brand-name{font-family:'Sora',sans-serif;font-size:.95rem;font-weight:800;color:var(--navy)}
+    .footer-brand-sub{font-size:.65rem;color:var(--muted)}
+    .footer-links{display:flex;gap:18px;flex-wrap:wrap}
+    .footer-links a{font-size:.78rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .footer-links a:hover{color:var(--navy)}
+    .footer-social{display:flex;gap:10px}
+    .footer-social a{width:32px;height:32px;background:var(--navy);border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;font-size:.75rem;font-weight:700;transition:opacity .2s}
+    .footer-social a:hover{opacity:.8}
+    .footer-copy{width:100%;text-align:center;font-size:.72rem;color:#b5bdd8;margin-top:6px}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ── MOBILE TWEAKS ── */
+    @media(max-width:480px){
+      .page{padding:0 12px 48px}
+      .nav{padding:12px 0 8px}
+      .nav-secure .nav-secure-text{display:none}
+      .hero{padding:24px 0 20px}
+      .hero h1{font-size:1.55rem}
+      .plans{gap:14px}
+      .plan-card{padding:22px 16px;border-radius:16px}
+      .plan-price-amount{font-size:2rem}
+      .compare-table th,.compare-table td{padding:9px 10px;font-size:.75rem}
+      .why-grid{gap:10px}
+      .why-item{padding:16px 12px}
+      .footer{flex-direction:column;gap:12px}
+      .footer-links{gap:12px}
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a class="nav-brand" href="index.html">
+      <img id="logo-img" src="" alt="Zenova"/>
+      <div class="nav-brand-text">
+        <span class="nav-brand-name">ZENOVA</span>
+        <span class="nav-brand-sub">Master The Lekki Headmaster</span>
+      </div>
+    </a>
+    <div class="nav-secure">
+      <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+        <path d="M7 1L2 3.5v3.5c0 2.9 2.2 5.6 5 6.2 2.8-.6 5-3.3 5-6.2V3.5L7 1z" fill="#8492b4" opacity=".3" stroke="#8492b4" stroke-width="1"/>
+        <path d="M4.5 7l2 2 3-3" stroke="#8492b4" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="nav-secure-text">Secure payments powered by</span>
+      <span class="paystack-badge">paystack</span>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-pill">
+      <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><rect x="1" y="2" width="12" height="9" rx="1.5" stroke="#1a3166" stroke-width="1.2"/><path d="M5 2V1M9 2V1M1 5h12" stroke="#1a3166" stroke-width="1.2" stroke-linecap="round"/></svg>
+      Choose your learning experience
+    </div>
+    <h1>Choose How You Want To Learn</h1>
+    <p>Chapter summaries, audio lessons, CBT practice and progress tracking — designed to help you master The Lekki Headmaster.</p>
+  </div>
+
+  <!-- PLANS -->
+  <div class="plans">
+
+    <!-- FREE STARTER -->
+    <div class="plan-card">
+      <div class="plan-icon free-icon">🎁</div>
+      <div class="plan-name dark-name">Free Starter</div>
+      <div class="plan-price">
+        <span class="plan-price-amount">₦0</span>
+      </div>
+      <div class="plan-desc">Perfect for exploring Zenova.</div>
+      <ul class="plan-features">
+        <li><svg class="check blue-check" viewBox="0 0 18 18" fill="none"><path d="M4 9l3.5 3.5L14 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>1 Chapter Summary</li>
+        <li><svg class="check blue-check" viewBox="0 0 18 18" fill="none"><path d="M4 9l3.5 3.5L14 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>1 Audio Lesson</li>
+        <li><svg class="check blue-check" viewBox="0 0 18 18" fill="none"><path d="M4 9l3.5 3.5L14 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>1 CBT Quiz Daily</li>
+        <li><svg class="check blue-check" viewBox="0 0 18 18" fill="none"><path d="M4 9l3.5 3.5L14 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Basic Dashboard</li>
+      </ul>
+      <a href="#" class="plan-btn btn-outline">Start Free &nbsp;→</a>
+    </div>
+
+    <!-- SCHOLAR -->
+    <div class="plan-card featured">
+      <div class="plan-badge blue-badge">MOST POPULAR</div>
+      <div class="plan-icon scholar-icon">👑</div>
+      <div class="plan-name blue-name">Scholar</div>
+      <div class="plan-price">
+        <span class="plan-price-amount">₦500</span>
+        <span class="plan-price-period"> / Month</span>
+      </div>
+      <div class="plan-desc">Great for consistent learners.</div>
+      <ul class="plan-features">
+        <li><svg class="check blue-check" viewBox="0 0 18 18" fill="none"><path d="M4 9l3.5 3.5L14 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>5 Chapter Summaries</li>
+        <li><svg class="check blue-check" viewBox="0 0 18 18" fill="none"><path d="M4 9l3.5 3.5L14 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>5 Audio Lessons</li>
+        <li><svg class="check blue-check" viewBox="0 0 18 18" fill="none"><path d="M4 9l3.5 3.5L14 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>5 CBT Quizzes Daily</li>
+        <li><svg class="check blue-check" viewBox="0 0 18 18" fill="none"><path d="M4 9l3.5 3.5L14 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Progress Tracking</li>
+        <li><svg class="check blue-check" viewBox="0 0 18 18" fill="none"><path d="M4 9l3.5 3.5L14 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Study Streak System</li>
+        <li><svg class="check blue-check" viewBox="0 0 18 18" fill="none"><path d="M4 9l3.5 3.5L14 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Performance Overview</li>
+      </ul>
+      <a href="#" class="plan-btn btn-blue">Upgrade to Scholar &nbsp;→</a>
+    </div>
+
+    <!-- MASTER -->
+    <div class="plan-card premium">
+      <div class="plan-badge gold-badge">BEST VALUE</div>
+      <div class="plan-icon master-icon">💎</div>
+      <div class="plan-name gold-name">Master</div>
+      <div class="plan-price">
+        <span class="plan-price-amount">₦1,500</span>
+        <span class="plan-price-period"> / Month</span>
+      </div>
+      <div class="plan-desc">For students who want to excel.</div>
+      <ul class="plan-features">
+        <li><svg class="check gold-check" viewBox="0 0 18 18" fill="none"><path d="M4 9l3.5 3.5L14 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Unlimited Chapter Summaries</li>
+        <li><svg class="check gold-check" viewBox="0 0 18 18" fill="none"><path d="M4 9l3.5 3.5L14 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Unlimited Audio Lessons</li>
+        <li><svg class="check gold-check" viewBox="0 0 18 18" fill="none"><path d="M4 9l3.5 3.5L14 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Unlimited CBT Quizzes</li>
+        <li><svg class="check gold-check" viewBox="0 0 18 18" fill="none"><path d="M4 9l3.5 3.5L14 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>General Novel Challenge</li>
+        <li><svg class="check gold-check" viewBox="0 0 18 18" fill="none"><path d="M4 9l3.5 3.5L14 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Advanced Analytics</li>
+        <li><svg class="check gold-check" viewBox="0 0 18 18" fill="none"><path d="M4 9l3.5 3.5L14 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Exam Readiness Tracking</li>
+        <li><svg class="check gold-check" viewBox="0 0 18 18" fill="none"><path d="M4 9l3.5 3.5L14 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Priority Access to New Content</li>
+        <li><svg class="check gold-check" viewBox="0 0 18 18" fill="none"><path d="M4 9l3.5 3.5L14 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Complete Learning Experience</li>
+      </ul>
+      <a href="#" class="plan-btn btn-gold">Become a Master &nbsp;→</a>
+    </div>
+
+  </div>
+
+  <!-- COMPARE TABLE -->
+  <div class="compare-section">
+    <div class="compare-title">Compare Plans</div>
+    <div class="table-wrap">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Free</th>
+            <th class="col-scholar">Scholar</th>
+            <th class="col-master">Master</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>📖 Chapter Summaries</td>
+            <td>1</td>
+            <td class="col-scholar">5</td>
+            <td>Unlimited</td>
+          </tr>
+          <tr>
+            <td>🎧 Audio Lessons</td>
+            <td>1</td>
+            <td class="col-scholar">5</td>
+            <td>Unlimited</td>
+          </tr>
+          <tr>
+            <td>❓ CBT Quizzes Daily</td>
+            <td>1</td>
+            <td class="col-scholar">5</td>
+            <td>Unlimited</td>
+          </tr>
+          <tr>
+            <td>📊 Progress Tracking</td>
+            <td><span class="check-icon">✓</span></td>
+            <td><span class="check-icon">✓</span></td>
+            <td><span class="check-icon check-gold">✓</span></td>
+          </tr>
+          <tr>
+            <td>📈 Analytics</td>
+            <td><span class="dash">—</span></td>
+            <td><span class="check-icon">✓</span></td>
+            <td><span class="check-icon check-gold">✓</span></td>
+          </tr>
+          <tr>
+            <td>🏆 Novel Challenge</td>
+            <td><span class="dash">—</span></td>
+            <td><span class="dash">—</span></td>
+            <td><span class="check-icon check-gold">✓</span></td>
+          </tr>
+          <tr>
+            <td>🎯 Priority Support</td>
+            <td><span class="dash">—</span></td>
+            <td><span class="dash">—</span></td>
+            <td><span class="check-icon check-gold">✓</span></td>
+          </tr>
+          <tr>
+            <td>⚡ New Content Access</td>
+            <td><span class="dash">—</span></td>
+            <td><span class="check-icon">✓</span></td>
+            <td><span class="check-icon check-gold">✓</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- WHY -->
+  <div class="why-section">
+    <div class="why-title">Why Students Love Zenova</div>
+    <div class="why-grid">
+      <div class="why-item">
+        <div class="why-icon">📖</div>
+        <div class="why-item-name">Easy Summaries</div>
+        <div class="why-item-desc">Simple, exam-focused chapter breakdowns.</div>
+      </div>
+      <div class="why-item">
+        <div class="why-icon">🎧</div>
+        <div class="why-item-name">Learn On The Go</div>
+        <div class="why-item-desc">Audio lessons anywhere, anytime.</div>
+      </div>
+      <div class="why-item">
+        <div class="why-icon">🧠</div>
+        <div class="why-item-name">Real Exam Practice</div>
+        <div class="why-item-desc">CBT-style questions to test knowledge.</div>
+      </div>
+      <div class="why-item">
+        <div class="why-icon">📊</div>
+        <div class="why-item-name">Track Progress</div>
+        <div class="why-item-desc">See improvement every day.</div>
+      </div>
+      <div class="why-item">
+        <div class="why-icon">🏆</div>
+        <div class="why-item-name">Build Confidence</div>
+        <div class="why-item-desc">Master the novel and ace exams.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <a class="footer-brand" href="index.html">
+      <img id="footer-logo" src="" alt="Zenova"/>
+      <div>
+        <div class="footer-brand-name">ZENOVA</div>
+        <div class="footer-brand-sub">Master The Lekki Headmaster</div>
+      </div>
+    </a>
+    <div class="footer-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Support</a>
+      <a href="#">Contact Us</a>
+    </div>
+    <div class="footer-social">
+      <a href="#">f</a>
+      <a href="#">t</a>
+      <a href="#">in</a>
+    </div>
+    <div class="footer-copy">© 2026 Zenova Technologies. All Rights Reserved.</div>
+  </footer>
+
+</div>
+
+<script>
+  const logoSrc = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABOYAAATmCAYAAACF/K4qAAABCGlDQ1BJQ0MgUHJvZmlsZQAAeJxjYGA8wQAELAYMDLl5JUVB7k4KEZFRCuwPGBiBEAwSk4sLGHADoKpv1yBqL+viUYcLcKakFicD6Q9ArFIEtBxopAiQLZIOYWuA2EkQtg2IXV5SUAJkB4DYRSFBzkB2CpCtkY7ETkJiJxcUgdT3ANk2uTmlyQh3M/Ck5oUGA2kOIJZhKGYIYnBncAL5H6IkfxEDg8VXBgbmCQixpJkMDNtbGRgkbiHEVBYwMPC3MDBsO48QQ4RJQWJRIliIBYiZ0tIYGD4tZ2DgjWRgEL7AwMAVDQsIHG5TALvNnSEfCNMZchhSgSKeDHkMyQx6QJYRgwGDIYMZAKbWPz9HbOBQAAEAAElEQVR4nOzdd5x0d133/9f3e86UbVdNJSEJSUgBAiShifSu0iwooICCNEVFb73VW++f3RsbKCrqjQKKilkiBURIQl+kJnQCIYSEkJBAEkhCQgiEkJCEkHveM+d0fn+c6+7OTu/u7Mzu7Ot5prbJe+7c7s7uzs7+9nlOQM45JEmSJEmSpO0VbfcDkCRJkiRJ2otMzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEnSNjAxJ0mSJEmStA1MzEmSJEmSJG0DE3OSJEmSJEnbwMScJEmSJEmSVl3eeQckSZK2ysWXXZ/HVcXaWp9JlahNxjRTQ9VsKYAQICS3uE0AioBjQoguNQtKhJAhQAhJ4gYTMEa8VwCFgAmJBE9ISXBqEEJLSMREJESMoFpMaVJWiUqRUiWiTElIlkjFCDRAJO5VJDBoAJ3coyR5AlEUSiSJGlDIiogByDiNKExgKBEMZS0xDVvUUlB2lsWEhY2aYsq0xVK3gYRYcNglpFhSY1e3JQBpWFGqbZfcKlGYm/7IiISHs7BFGSwkJcIeAABBDASFAAAAAFJRU5ErkJggg==";
+  document.getElementById('logo-img').src = logoSrc;
+  document.getElementById('footer-logo').src = logoSrc;
+</script>
+</body>
+</html>
